@@ -8,6 +8,7 @@ defmodule Realworld.Article do
     field :description, :string
     field :tag, {:array, :string}
 		belongs_to :author, Realworld.User
+		many_to_many :users_favourites, Realworld.User, join_through: "favourites_articles"
 
 		timestamps()
   end
