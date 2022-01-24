@@ -2,7 +2,7 @@ defmodule Realworld.Repo.Migrations.CreateFavouritesArticles do
   use Ecto.Migration
 
   def change do
-    create table (:favourites_articles) do
+    create table(:favourites_articles) do
       add :article_id, references(:articles)
       add :user_id, references(:users)
     end
