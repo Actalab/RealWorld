@@ -77,10 +77,22 @@ defmodule Realworld.Blog do
     |> Repo.insert()
   end
 
-  def delete_comment() do
+  def delete_comment(comment) do
+    Repo.delete(comment)
   end
 
-  def get_comment() do
-    
+  def get_all_comments() do
+    query = from(Comment)
+    Repo.all(query)
+  end
+
+  def get_comments_article(article) do
+    query = from(Comment, where: [article_id: ^article.id], select: [:text])
+    Repo.all(query)
+  end
+
+  def get_comments_user(user) do
+    query = from(Comment, where: [author_id: ^user.id], select: [:text])
+    Repo.all(query)
   end
 end

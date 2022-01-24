@@ -1,5 +1,6 @@
 defmodule Realworld.Comment do
   use Ecto.Schema
+	alias __MODULE__
   import Ecto.Changeset
 
   schema "comments" do
@@ -12,7 +13,9 @@ defmodule Realworld.Comment do
 
   def changeset(struct, params) do
     struct
-    |> cast(params, [:text])
+    |> cast(params, [:text, :author_id, :article_id])
     |> validate_required([:text])
   end
+
+	def changeset(params), do: changeset(%Comment{}, params)
 end
