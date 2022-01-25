@@ -20,7 +20,8 @@ defmodule Realworld.Blog do
   end
 
   def get_user(params) do
-    Repo.get_by(User, email: String.downcase(params["email"]))
+    #Repo.get_by(User, email: String.downcase(params["email"]))
+    Repo.get_by(User, id: "1")
   end
 
   defp authenticate(user, password) do
@@ -58,16 +59,34 @@ defmodule Realworld.Blog do
     |> Repo.update()
   end
 
-  def get_article do
+  def get_article(article_id) do
+    Repo.get(Article, article_id)
+  end
+
+  def list_articles do
     query = from(Article)
     Repo.all(query)
+  end
+
+  def list_articles_by_user(user) do
+    user = Repo.get(User, user.id)
+    articles = Repo.all Ecto.assoc(user, :articles)
+    [user] = Repo.all(from(u in User, where: u.id == ^user.id, preload: :articles))
+    Realworld.Repo.preload(user.articles, [:author, :comments])
   end
 
   def delete_article(article) do
     Repo.delete(article)
   end
 
-  def fav_article() do
+  def add_fav_article(user, article) do
+    user = Repo.preload(user, [:articles, :favourites_articles])
+    user_changeset = Ecto.Changeset.change(user)
+    user_favourites_changeset = user_changeset |> Ecto.Changeset.put_assoc(:favourites_articles, [article])
+    Repo.update!(user_favourites_changeset)
+  end
+
+  def get_fav_article_by_user(user) do
   end
 
   # -----------COMMENTS-----------#
@@ -81,17 +100,26 @@ defmodule Realworld.Blog do
     Repo.delete(comment)
   end
 
-  def get_all_comments() do
+  def get_comment(comment_id) do
+    #query = from(Comment, where: [id: ^comment_id], select: [:text])
+    Repo.get(Comment, comment_id)
+  end
+
+  def list_all_comments() do
     query = from(Comment)
     Repo.all(query)
   end
 
-  def get_comments_article(article) do
-    query = from(Comment, where: [article_id: ^article.id], select: [:text])
-    Repo.all(query)
+  def list_comments_by_article(article) do
+    #query = from(Comment, where: [article_id: ^article.id], select: [:text])
+    #Repo.all(query)
+    article = Repo.get(Article, article.id)
+    comments = Repo.all Ecto.assoc(article, :comments)
+    [article] = Repo.all(from(a in Article, where: a.id == ^article.id, preload: :comments))
+    article.comments
   end
 
-  def get_comments_user(user) do
+  def list_comments_by_user(user) do
     query = from(Comment, where: [author_id: ^user.id], select: [:text])
     Repo.all(query)
   end

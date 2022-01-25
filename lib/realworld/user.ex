@@ -10,7 +10,7 @@ defmodule Realworld.User do
     field :password_hash, :string
     field :bio, :string
 		has_many :articles, Article, foreign_key: :author_id
-    # many_to_many :favourites_articles, Realworld.Article, join_through: "favourites_articles"
+    many_to_many :favourites_articles, Realworld.Article, join_through: "favourites_articles", join_keys: [user_id: :id, article_id: :id]
     # many_to_many :followed_users, Realworld.User, join_through: "following_table"
     # many_to_many :followers_users, Realworld.User, join_through: "following_table"
   end

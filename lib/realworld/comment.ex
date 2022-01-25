@@ -14,6 +14,8 @@ defmodule Realworld.Comment do
   def changeset(struct, params) do
     struct
     |> cast(params, [:text, :author_id, :article_id])
+    |> cast_assoc(:author)
+    |> cast_assoc(:article)
     |> validate_required([:text])
   end
 

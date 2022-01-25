@@ -10,7 +10,7 @@ defmodule Realworld.Article do
     field :tag, {:array, :string}
     belongs_to :author, Realworld.User
 		has_many :comments, Realworld.Comment, foreign_key: :article_id
-    # many_to_many :favourites_users, Realworld.User, join_through: "favourites_articles"
+    many_to_many :users, Realworld.User, join_through: "favourites_articles"
 
     timestamps()
   end
