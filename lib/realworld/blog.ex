@@ -9,46 +9,60 @@ defmodule Realworld.Blog do
   # end
 
   def create_user(params) do
-    # %User{}
-    # |> User.registration_changeset(params)
-    # |> put_change(:password_hash, hashed_password(params["password"]))
-    # |> Repo.insert!()
-    changeset = User.registration_changeset(%User{}, params)
-    Repo.insert!(changeset)
+    %User{}
+    |> User.registration_changeset(params)
+    |> Repo.insert!()
   end
 
-  def get_user(params) do
-    #Repo.get_by(User, email: String.downcase(params["email"]))
-    Repo.get_by(User, id: "1")
+  def get_user(user_id, preload_associations \\ []) do
+    User
+    |> Repo.get_by(id: user_id)
+    |> Repo.preload(preload_associations)
   end
 
   def authenticate(user, password) do
     case user do
-      nil -> false
+      nil -> {:error, "invalid user"}
       _ -> Bcrypt.check_pass(user, password)
     end
   end
 
-  def update_user(user, change_attributes) do #NE FONCTIONNE PAS
-    user_changeset = User.registration_changeset(user, change_attributes) #NE FONCTIONNE PAS
-    Repo.update!(user_changeset) #NE FONCTIONNE PAS
+  def update_user(user, change_attributes) do
+    user
+    |> User.changeset(change_attributes)
+    |> Repo.update()
   end
+
+  def update_user!(user, change_attributes) do
+    {:ok, updated_user} = update_user(user, change_attributes)
+    updated_user
+  end
+
 
   def follow_user(user, user_to_follow) do
-    user = Repo.preload(user, [:articles, :favourites_articles, :followed_users, :followers_users])
-    user_changeset = Ecto.Changeset.change(user)
-    user_follow_changeset = user_changeset |> Ecto.Changeset.put_assoc(:followed_users, [user_to_follow])
-    Repo.update!(user_follow_changeset)
+    preloaded_user = Repo.preload(user, [:articles, :favourites_articles, :followed_users, :followers_users])
+    preloaded_user
+    |> change() 
+    |> put_assoc(:followed_users, preloaded_user.followed_users ++ [user_to_follow])
+    |> Repo.update!()
   end
 
-  def list_followed(user) do
-    user = Repo.preload(user, :followed_users)
-    user.followed_users
+  #FROM @Thibaud
+  def list_followed(%{followed_users:  %Ecto.Association.NotLoaded{}} = user) do
+    IO.inspect(user.id, label: "list_followed/1 user no followed assoc")
+    user
+    |> Repo.preload([:followed_users])
+    |> list_followed()
+  end
+
+  def list_followed(%{followed_users: followed_users} = user) do
+    IO.inspect(user.id, label: "list_followed/1 user has followed assoc")
+    followed_users
   end
 
   def list_followers(user) do
-    user = Repo.preload(user, :followers_users)
-    user.followers_users
+    %{followers_users: followers_users} = Repo.preload(user, :followers_users)
+    followers_users
   end
 
   def list_users() do
@@ -81,7 +95,7 @@ defmodule Realworld.Blog do
   end
 
   def list_articles_by_user(user) do
-    articles = Repo.all Ecto.assoc(user, :articles)
+    _articles = Repo.all Ecto.assoc(user, :articles)
     [user] = Repo.all(from(u in User, where: u.id == ^user.id, preload: :articles))
     Realworld.Repo.preload(user.articles, [:author, :comments])
   end
@@ -92,8 +106,8 @@ defmodule Realworld.Blog do
 
   def add_fav_article(user, article) do
     user = Repo.preload(user, [:articles, :favourites_articles])
-    user_changeset = Ecto.Changeset.change(user)
-    user_favourites_changeset = user_changeset |> Ecto.Changeset.put_assoc(:favourites_articles, [article])
+    user_changeset = change(user)
+    user_favourites_changeset = user_changeset |> put_assoc(:favourites_articles, [article])
     Repo.update!(user_favourites_changeset)
   end
 
@@ -129,7 +143,7 @@ defmodule Realworld.Blog do
     #query = from(Comment, where: [article_id: ^article.id], select: [:text])
     #Repo.all(query)
     #article = Repo.get(Article, article.id)
-    comments = Repo.all Ecto.assoc(article, :comments)
+    _comments = Repo.all Ecto.assoc(article, :comments)
     [article] = Repo.all(from(a in Article, where: a.id == ^article.id, preload: :comments))
     article.comments
   end
