@@ -34,8 +34,19 @@ defmodule Realworld.Blog do
     Repo.update!(user_changeset) #NE FONCTIONNE PAS
   end
 
-  def follow_user() do
+  def follow_user(user, user_to_follow) do
+    user = Repo.preload(user, [:articles, :favourites_articles, :followed_users, :followers_users])
+    user_changeset = Ecto.Changeset.change(user)
+    user_follow_changeset = user_changeset |> Ecto.Changeset.put_assoc(:followed_users, [user_to_follow])
+    Repo.update!(user_follow_changeset)
+  end
 
+  def list_followed(user) do
+  
+  end
+
+  def list_followers(user) do
+  
   end
 
   def list_users() do
@@ -85,7 +96,7 @@ defmodule Realworld.Blog do
     Repo.update!(user_favourites_changeset)
   end
 
-  def get_fav_article_by_user(user) do
+  def list_fav_article_by_user(user) do
     #query = from()
   end
 
