@@ -3,20 +3,18 @@ defmodule Realworld.Blog do
   import Ecto.{Changeset, Query}
 
   # -----------USERS-----------#
-  def registration_changeset(struct, params) do
-    struct
-    |> cast(params, [:email, :username, :password_hash])
-  end
+  # def registration_changeset(struct, params) do
+  #   struct
+  #   |> cast(params, [:email, :username, :password_hash])
+  # end
 
   def create_user(params) do
-    %User{}
-    |> registration_changeset(params)
-    |> put_change(:password_hash, hashed_password(params["password"]))
-    |> Repo.insert!()
-  end
-
-  defp hashed_password(password) do
-    Comeonin.Bcrypt.hashpwsalt(password)
+    # %User{}
+    # |> User.registration_changeset(params)
+    # |> put_change(:password_hash, hashed_password(params["password"]))
+    # |> Repo.insert!()
+    changeset = User.registration_changeset(%User{}, params)
+    Repo.insert!(changeset)
   end
 
   def get_user(params) do
@@ -24,15 +22,15 @@ defmodule Realworld.Blog do
     Repo.get_by(User, id: "1")
   end
 
-  defp authenticate(user, password) do
+  def authenticate(user, password) do
     case user do
       nil -> false
-      _ -> Comeonin.Bcrypt.checkpw(password, user.crypted_password)
+      _ -> Bcrypt.check_pass(user, password)
     end
   end
 
   def update_user(user, change_attributes) do
-    user_changeset = User.changeset(user, change_attributes)
+    user_changeset = User.registration_changeset(user, change_attributes)
     Repo.update!(user_changeset)
   end
 
@@ -87,6 +85,7 @@ defmodule Realworld.Blog do
   end
 
   def get_fav_article_by_user(user) do
+    #query = from()
   end
 
   # -----------COMMENTS-----------#

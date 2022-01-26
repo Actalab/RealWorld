@@ -19,6 +19,22 @@ defmodule Realworld.User do
     struct
     |> cast(params, [:email, :username, :password_hash, :bio, :password])
     |> validate_required([:email, :username, :password])
-    |> unique_constraint(:email)
+    #|> unique_constraint(:email)
+  end
+
+  def registration_changeset(struct, params) do
+    struct
+    |> changeset(params)
+    |> validate_length(:password, min: 6)
+    |> put_password_hash()
+  end
+
+  defp put_password_hash(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{password: pass}} ->
+        put_change(changeset, :password_hash, Bcrypt.hash_pwd_salt(pass))    
+      _ ->
+        changeset  
+    end
   end
 end
