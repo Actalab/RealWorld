@@ -29,9 +29,9 @@ defmodule Realworld.Blog do
     end
   end
 
-  def update_user(user, change_attributes) do
-    user_changeset = User.registration_changeset(user, change_attributes)
-    Repo.update!(user_changeset)
+  def update_user(user, change_attributes) do #NE FONCTIONNE PAS
+    user_changeset = User.registration_changeset(user, change_attributes) #NE FONCTIONNE PAS
+    Repo.update!(user_changeset) #NE FONCTIONNE PAS
   end
 
   def follow_user() do
@@ -39,12 +39,13 @@ defmodule Realworld.Blog do
   end
 
   def list_users() do
-    
+    query = from(User)
+    Repo.all(query)
   end
 
   # -----------ARTICLES-----------#
-  def create_article(attributes) do
-    %Article{}
+  def create_article(user, attributes) do
+    %Article{author_id: user.id}
     #|> Ecto.build_assoc(:author)
     #|> Ecto.build_assoc(:favourites_users)
     |> Article.changeset(attributes)
@@ -89,8 +90,8 @@ defmodule Realworld.Blog do
   end
 
   # -----------COMMENTS-----------#
-  def create_comment(attributes) do
-    %Comment{}
+  def create_comment(user, article, attributes) do
+    %Comment{article_id: article.id, author_id: user.id}
     |> Comment.changeset(attributes)
     |> Repo.insert()
   end
