@@ -42,11 +42,13 @@ defmodule Realworld.Blog do
   end
 
   def list_followed(user) do
-  
+    user = Repo.preload(user, :followed_users)
+    user.followed_users
   end
 
   def list_followers(user) do
-  
+    user = Repo.preload(user, :followers_users)
+    user.followers_users
   end
 
   def list_users() do
@@ -79,7 +81,6 @@ defmodule Realworld.Blog do
   end
 
   def list_articles_by_user(user) do
-    user = Repo.get(User, user.id)
     articles = Repo.all Ecto.assoc(user, :articles)
     [user] = Repo.all(from(u in User, where: u.id == ^user.id, preload: :articles))
     Realworld.Repo.preload(user.articles, [:author, :comments])
@@ -97,7 +98,10 @@ defmodule Realworld.Blog do
   end
 
   def list_fav_article_by_user(user) do
-    #query = from()
+    # query = from(u in User, join: f in assoc(u, :favourites_articles), preload: [favourites_articles: f])
+    # user = Repo.all(query)
+    user = Repo.preload(user, :favourites_articles)
+    user.favourites_articles
   end
 
   # -----------COMMENTS-----------#
@@ -124,7 +128,7 @@ defmodule Realworld.Blog do
   def list_comments_by_article(article) do
     #query = from(Comment, where: [article_id: ^article.id], select: [:text])
     #Repo.all(query)
-    article = Repo.get(Article, article.id)
+    #article = Repo.get(Article, article.id)
     comments = Repo.all Ecto.assoc(article, :comments)
     [article] = Repo.all(from(a in Article, where: a.id == ^article.id, preload: :comments))
     article.comments
