@@ -1,6 +1,7 @@
 defmodule Realworld.Blog do
   alias Realworld.{Repo, User, Article, Comment}
   import Ecto.{Changeset, Query}
+  @default_article_pagination_limit 10
 
   # -----------USERS-----------#
   # def registration_changeset(struct, params) do
@@ -40,11 +41,18 @@ defmodule Realworld.Blog do
 
 
   def follow_user(user, user_to_follow) do
+    #preloaded_user = Repo.preload(user, [:articles, :favourites_articles, :followed_users, :followers_users])
+    #preloaded_user
     preloaded_user = Repo.preload(user, [:articles, :favourites_articles, :followed_users, :followers_users])
     preloaded_user
     |> change() 
     |> put_assoc(:followed_users, preloaded_user.followed_users ++ [user_to_follow])
     |> Repo.update!()
+  end
+
+  def unfollow_user(user, user_to_unfollow) do
+    query = from(f in "following_table", where: f.followed_user_id == ^user_to_unfollow.id and f.follower_user_id == ^user.id, select: [:followed_user_id, :follower_user_id])
+    Repo.delete_all(query)
   end
 
   #FROM @Thibaud
@@ -65,9 +73,13 @@ defmodule Realworld.Blog do
     followers_users
   end
 
-  def list_users() do
-    query = from(User)
-    Repo.all(query)
+  def list_users(preload_associations \\ []) do
+    User
+    |> from()
+    |> Repo.all()
+    |> Repo.preload(preload_associations)
+    #query = from(User)
+    #Repo.all(query)
   end
 
   # -----------ARTICLES-----------#
@@ -85,13 +97,32 @@ defmodule Realworld.Blog do
     |> Repo.update()
   end
 
-  def get_article(article_id) do
-    Repo.get(Article, article_id)
+  def get_article(article_id, preload_associations \\ []) do
+    Article
+    |> Repo.get(article_id)
+    |> Repo.preload(preload_associations)
   end
 
-  def list_articles do
-    query = from(Article)
-    Repo.all(query)
+  def list_articles(params) do
+    limit = params["limit"] || @default_article_pagination_limit
+    offset = params["offset"] || 0
+    
+    from(a in Article, limit: ^limit, offset: ^offset, order_by: a.inserted_at)
+    |> filter_by_tags(params["tag"])
+    |> Repo.all()
+    # Article
+    # |> from()
+    # |> Repo.all()
+    #query = from(Article)
+    #Repo.all(query)
+  end
+
+  def filter_by_tags(query, nil) do
+    query
+  end
+
+  def filter_by_tags(query, tag) do
+    from q in query, where: ^tag in q.tag
   end
 
   def list_articles_by_user(user) do
@@ -105,10 +136,19 @@ defmodule Realworld.Blog do
   end
 
   def add_fav_article(user, article) do
-    user = Repo.preload(user, [:articles, :favourites_articles])
-    user_changeset = change(user)
-    user_favourites_changeset = user_changeset |> put_assoc(:favourites_articles, [article])
-    Repo.update!(user_favourites_changeset)
+    # user = Repo.preload(user, [:articles, :favourites_articles])
+    # user_changeset = change(user)
+    # user_favourites_changeset = user_changeset |> put_assoc(:favourites_articles, [article])
+    # Repo.update!(user_favourites_changeset)
+    Repo.preload(user, [:articles, :favourites_articles])
+    |> change()
+    |> put_assoc(:favourites_articles, [article])
+    |> Repo.update!()
+  end
+
+  def unfav_article(user, article) do
+    query = from(f in "favourites_articles", where: f.article_id == ^article.id and f.user_id == ^user.id, select: [:article_id, :user_id])
+    Repo.delete_all(query)
   end
 
   def list_fav_article_by_user(user) do
@@ -116,6 +156,18 @@ defmodule Realworld.Blog do
     # user = Repo.all(query)
     user = Repo.preload(user, :favourites_articles)
     user.favourites_articles
+  end
+
+  def list_articles_of_followed(user) do
+    #list_followers(user)
+    Repo.all(from(a in Article, join: ft in "following_table", on: a.author_id == ft.followed_user_id, where: ft.follower_user_id == ^user.id))
+  end
+
+  def list_tags() do
+    from(a in Article, where: not is_nil(a.tag), select: a.tag)
+    |> Repo.all()
+    |> List.flatten()
+    |> Enum.uniq()
   end
 
   # -----------COMMENTS-----------#
@@ -135,8 +187,11 @@ defmodule Realworld.Blog do
   end
 
   def list_all_comments() do
-    query = from(Comment)
-    Repo.all(query)
+    Comment
+    |> from()
+    |> Repo.all()
+    # query = from(Comment)
+    # Repo.all(query)
   end
 
   def list_comments_by_article(article) do
@@ -149,7 +204,10 @@ defmodule Realworld.Blog do
   end
 
   def list_comments_by_user(user) do
-    query = from(Comment, where: [author_id: ^user.id], select: [:text])
-    Repo.all(query)
+    Comment
+    |> from(where: [author_id: ^user.id], select: [:text])
+    |> Repo.all()
+    # query = from(Comment, where: [author_id: ^user.id], select: [:text])
+    # Repo.all(query)
   end
 end
