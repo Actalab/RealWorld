@@ -18,6 +18,10 @@ defmodule RealworldWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    resources "/users", UserController
+    resources "/articles", ArticleController do
+      resources "/comments", CommentController
+    end
   end
 
   # Other scopes may use custom stacks.
