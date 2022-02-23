@@ -1,0 +1,77 @@
+
+<div class="profile-page">
+
+	<div class="user-info">
+		<div class="container">
+			<div class="row">
+
+				<div class="col-xs-12 col-md-10 offset-md-1">
+					<img src="http://i.imgur.com/Qr71crq.jpg" class="user-img"/>
+					<h4><%= @user.username %></h4>
+					<p>
+						<%= @user.bio %>
+					</p>
+					<button class="btn btn-sm btn-outline-secondary action-btn">
+						<i class="ion-plus-round"></i>
+						&nbsp;
+						Follow <%= @user.username %>
+					</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+
+			<div class="col-xs-12 col-md-10 offset-md-1">
+				<div class="articles-toggle">
+					<ul class="nav nav-pills outline-active">
+						<li class="nav-item">
+							<a class="nav-link active" href="">My Articles</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="">Favorited Articles</a>
+						</li>
+					</ul>
+				</div>
+
+				<%= for article <- @articles do %>
+					<div class="article-preview">
+						<div class="article-meta">
+							<%= link to: Routes.users_path(@conn, :show, article.author) do %>
+								<img src="http://i.imgur.com/Qr71crq.jpg"/>
+							<% end %>
+							<div class="info">
+								<%= link to: Routes.users_path(@conn, :show, article.author), class: "author" do %>
+									<%= article.author.username %>
+								<% end %>
+								<span class="date"><%= Date.to_iso8601(article.inserted_at) %></span>
+							</div>
+							<button class="btn btn-outline-primary btn-sm pull-xs-right">
+								<i class="ion-heart"></i> 29
+							</button>
+						</div>
+						<%= link to: Routes.articles_path(@conn, :show, article), class: "preview-link" do %>
+							<h1>How to build webapps that scale</h1>
+							<p>This is the description for the post.</p>
+							<span>Read more...</span>
+						<ul class="tag-list">
+							<%= unless is_nil(article.tag) do %>
+								<%= for tag <- article.tag do %>
+										<li class="tag-default tag-pill tag-outline"><%= tag %></li>
+								<% end %>
+							<% end %>
+						</ul>
+						<% end %>
+					</div>
+				<% end %>
+
+
+			</div>
+
+		</div>
+	</div>
+
+</div>

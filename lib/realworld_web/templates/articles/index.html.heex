@@ -39,6 +39,13 @@
                             <h1><%= article.title %></h1>
                             <p><%= article.description %></p>
                             <span>Read more...</span>
+                            <ul class="tag-list">
+                                <%= unless is_nil(article.tag) do %>
+                                    <%= for tag <- article.tag do %>
+                                        <li class="tag-default tag-pill tag-outline"><%= tag %></li>
+                                    <% end %>
+                                <% end %>
+                            </ul>
                         <% end %>
                     </div>
                 <% end %>
@@ -50,9 +57,9 @@
                     <p>Popular Tags</p>
 
                     <div class="tag-list">
-                        <%= for tag <- @tags |> IO.inspect() do %>
+                        <%= for tag <- @tags do %>
                             <a href="" class="tag-pill tag-default"><%= tag %></a>
-                            <% end %>
+                        <% end %>
                     </div>
                 </div>
             </div>

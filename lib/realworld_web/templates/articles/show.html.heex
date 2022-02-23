@@ -5,15 +5,19 @@
       <div class="container">
          <h1><%= @article.title %></h1>
          <div class="article-meta">
-            <a href=""><img src="http://i.imgur.com/Qr71crq.jpg"/></a>
+            <%= link to: Routes.users_path(@conn, :show, @article.author) do %>
+               <img src="http://i.imgur.com/Qr71crq.jpg"/>
+            <% end %>
             <div class="info">
-               <a href="" class="author">Eric Simons</a>
+               <%= link to: Routes.users_path(@conn, :show, @article.author), class: "author" do %>
+                  <%= @article.author.username %>
+               <% end %>
                <span class="date"><%= Date.to_iso8601(@article.inserted_at) %></span>
             </div>
             <button class="btn btn-sm btn-outline-secondary">
             <i class="ion-plus-round"></i>
             &nbsp;
-            Follow Eric Simons <span class="counter">(10)</span>
+            Follow <%= @article.author.username %><span class="counter">(10)</span>
             </button>
             &nbsp;&nbsp;
             <button class="btn btn-sm btn-outline-primary">
@@ -35,15 +39,19 @@
       <hr/>
       <div class="article-actions">
          <div class="article-meta">
-            <a href="profile.html"><img src="http://i.imgur.com/Qr71crq.jpg"/></a>
+            <%= link to: Routes.users_path(@conn, :show, @article.author) do %>
+               <img src="http://i.imgur.com/Qr71crq.jpg"/>
+            <% end %>
             <div class="info">
-               <a href="" class="author">Eric Simons</a>
-               <span class="date">January 20th</span>
+               <%= link to: Routes.users_path(@conn, :show, @article.author), class: "author" do %>
+                  <%= @article.author.username %>
+               <% end %>
+               <span class="date"><%= Date.to_iso8601(@article.inserted_at) %></span>
             </div>
             <button class="btn btn-sm btn-outline-secondary">
             <i class="ion-plus-round"></i>
             &nbsp;
-            Follow Eric Simons
+            Follow <%= @article.author.username %>
             </button>
             &nbsp;
             <button class="btn btn-sm btn-outline-primary">
@@ -67,19 +75,21 @@
                </div>
             </form>
             <%= for comment <- @comments do %>
-            <div class="card">
-               <div class="card-block">
-                  <p class="card-text"><%= comment.text %></p>
+               <div class="card">
+                  <div class="card-block">
+                     <p class="card-text"><%= comment.text %></p>
+                  </div>
+                  <div class="card-footer">
+                     <%= link to: Routes.users_path(@conn, :show, comment.author), class: "comment-author" do %>
+                        <img src="http://i.imgur.com/Qr71crq.jpg" class="comment-author-img"/>
+                     <% end %>
+                     &nbsp;
+                     <%= link to: Routes.users_path(@conn, :show, comment.author), class: "comment-author" do %>
+                        <%= comment.author.username %>
+                     <% end %>
+                     <span class="date-posted"><%= Date.to_iso8601(comment.inserted_at) %></span>
+                  </div>
                </div>
-               <div class="card-footer">
-                  <a href="" class="comment-author">
-                  <img src="http://i.imgur.com/Qr71crq.jpg" class="comment-author-img"/>
-                  </a>
-                  &nbsp;
-                  <a href="" class="comment-author">Jacob Schmidt</a>
-                  <span class="date-posted">Dec 29th</span>
-               </div>
-            </div>
             <% end %>
          </div>
       </div>

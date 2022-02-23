@@ -7,14 +7,13 @@ defmodule RealworldWeb.ArticlesController do
 
   def index(conn, _params) do
     articles = Blog.list_articles(%{"limit" => 10, "offset" => 0})
-    IO.inspect(articles)
     tags = Blog.list_tags()
     render(conn, "index.html", articles: articles, tags: tags)
   end
   
   def show(conn, %{"id" => id}) do
-    article = Blog.get_article(id)
-    comments = Blog.list_comments_by_article(article)
+    article = Blog.get_article(id, :author)
+    comments = Blog.list_comments_by_article(article, :author)
     render(conn, "show.html", article: article, comments: comments)
   end
 
