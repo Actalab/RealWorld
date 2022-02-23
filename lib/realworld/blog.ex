@@ -93,8 +93,8 @@ defmodule Realworld.Blog do
   def list_articles(params) do
     limit = params["limit"] || @default_article_pagination_limit
     offset = params["offset"] || 0
-    
-    from(a in Article, limit: ^limit, offset: ^offset, order_by: a.inserted_at)
+  
+    from(a in Article, limit: ^limit, offset: ^offset, order_by: a.inserted_at, preload: :author)
     |> filter_by_tags(params["tag"])
     |> Repo.all()
   end
@@ -144,6 +144,17 @@ defmodule Realworld.Blog do
     |> Repo.all()
     |> List.flatten()
     |> Enum.uniq()
+  end
+
+  def handle_tags(article_map) do
+    {old, new} =
+      article_map
+      |> Map.get_and_update("tag", fn current_value ->
+        if current_value != "" do
+          {current_value, String.split(current_value, [", ", ",", " "])}
+        end
+      end)
+      new
   end
 
   # -----------COMMENTS-----------#

@@ -1,0 +1,63 @@
+
+<div class="home-page">
+
+    <div class="banner">
+        <div class="container">
+            <h1 class="logo-font">conduit</h1>
+            <p>A place to share your knowledge.</p>
+        </div>
+    </div>
+
+    <div class="container page">
+        <div class="row">
+
+            <div class="col-md-9">
+                <div class="feed-toggle">
+                    <ul class="nav nav-pills outline-active">
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="">Your Feed</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="">Global Feed</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <%= for article <- @articles do %>
+                    <div class="article-preview">
+                        <div class="article-meta">
+                            <a href="profile.html"><img src="http://i.imgur.com/Qr71crq.jpg"/></a>
+                            <div class="info">
+                                <a href="" class="author"><%= article.author.username %></a>
+                                <span class="date"><%= Date.to_iso8601(article.inserted_at) %></span>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm pull-xs-right">
+                                <i class="ion-heart"></i> 29
+                            </button>
+                        </div>
+                        <%= link to: Routes.articles_path(@conn, :show, article), class: "preview-link" do %>
+                            <h1><%= article.title %></h1>
+                            <p><%= article.description %></p>
+                            <span>Read more...</span>
+                        <% end %>
+                    </div>
+                <% end %>
+
+            </div>
+
+            <div class="col-md-3">
+                <div class="sidebar">
+                    <p>Popular Tags</p>
+
+                    <div class="tag-list">
+                        <%= for tag <- @tags |> IO.inspect() do %>
+                            <a href="" class="tag-pill tag-default"><%= tag %></a>
+                            <% end %>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

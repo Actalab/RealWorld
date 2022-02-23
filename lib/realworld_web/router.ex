@@ -17,11 +17,18 @@ defmodule RealworldWeb.Router do
   scope "/", RealworldWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
-    resources "/users", UserController
-    resources "/articles", ArticleController do
-      resources "/comments", CommentController
-    end
+    get "/", ArticlesController, :index
+
+    #get "/articles/:id", ArticlesController, :show
+
+    resources "/articles", ArticlesController, except: [:index]
+
+    #ressources "/:user", UserController, except: [:index, :delete]
+
+    #resources "/users", UserController
+    #resources "/articles", ArticleController do
+    #  resources "/comments", CommentController
+    #end
   end
 
   # Other scopes may use custom stacks.

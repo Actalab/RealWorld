@@ -20,16 +20,20 @@
     <header>
       <nav class="navbar navbar-light">
         <div class="container">
-          <a class="navbar-brand" href="index.html">conduit</a>
+          <%= link to: Routes.articles_path(@conn, :index), class: "navbar-brand" do %>
+            conduit
+          <% end %>
           <ul class="nav navbar-nav pull-xs-right">
             <li class="nav-item">
                 <!-- Add "active" class when you're on that page" -->
-                <a class="nav-link active" href="">Home</a>
+                <%= link to: Routes.articles_path(@conn, :index), class: "nav-link active" do %>
+                  Home
+                <% end %>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="">
+                <%= link to: Routes.articles_path(@conn, :new), class: "nav-link" do %>
                     <i class="ion-compose"></i>&nbsp;New Article
-                </a>
+                <% end %>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="">
@@ -50,7 +54,9 @@
 
     <footer>
       <div class="container">
-        <a href="/" class="logo-font">conduit</a>
+        <%= link to: Routes.articles_path(@conn, :index), class: "logo-font" do %>
+            conduit
+          <% end %>
         <span class="attribution">
           An interactive learning project from <a href="https://thinkster.io">Thinkster</a>. Code &amp; design licensed under MIT.
         </span>

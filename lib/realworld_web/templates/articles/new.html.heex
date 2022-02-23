@@ -1,0 +1,30 @@
+
+<div class="editor-page">
+    <div class="container page">
+        <div class="row">
+
+            <div class="col-md-10 offset-md-1 col-xs-12">
+                <%= form_for @changeset, Routes.articles_path(@conn, :create), fn f -> %>
+                    <fieldset>
+                        <fieldset class="form-group">
+                            <%= text_input f, :title, class: "form-control form-control-lg", placeholder: "Article Title"%>
+                        </fieldset>
+                        <fieldset class="form-group">
+                            <%= text_input f, :description, class: "form-control", placeholder: "What's this article about?"%>
+                        </fieldset>
+                        <fieldset class="form-group">
+                            <%= textarea f, :body, class: "form-control", rows: "8", placeholder: "Write your article (in markdown)"%>
+                        </fieldset>
+                        <fieldset class="form-group">
+                            <%= text_input f, :tag, class: "form-control", placeholder: "Enter tags"%>
+                            <div class="tag-list"></div>
+                        </fieldset>
+                        <%= submit "Publish Article", class: "btn btn-lg pull-xs-right btn-primary" %>
+                    </fieldset>
+                <% end %>
+            </div>
+
+        </div>
+    </div>
+</div>
+
