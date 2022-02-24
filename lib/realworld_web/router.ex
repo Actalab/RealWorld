@@ -31,6 +31,12 @@ defmodule RealworldWeb.Router do
 
     post "/users/:id/follow", UsersController, :follow
 
+    post "/users/:id/unfollow", UsersController, :unfollow
+
+    post "/articles/:id/like", UsersController, :like
+
+    post "/articles/:id/unlike", UsersController, :unlike
+
     #resources "/users", UserController
     #resources "/articles", ArticleController do
     #  resources "/comments", CommentController

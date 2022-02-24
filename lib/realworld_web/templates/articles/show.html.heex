@@ -17,7 +17,7 @@
             <button class="btn btn-sm btn-outline-secondary">
             <i class="ion-plus-round"></i>
             &nbsp;
-            Follow <%= @article.author.username %><span class="counter">(10)</span>
+            Follow <%= @article.author.username %>
             </button>
             &nbsp;&nbsp;
             <button class="btn btn-sm btn-outline-primary">
@@ -48,17 +48,65 @@
                <% end %>
                <span class="date"><%= Date.to_iso8601(@article.inserted_at) %></span>
             </div>
-            <button class="btn btn-sm btn-outline-secondary">
+            <!-- -->
+            <%= if RealworldWeb.Helpers.SessionHelper.get_user_id_session(@conn) == @article.author_id do %>
+					<%= link to: Routes.articles_path(@conn, :edit, @article), method: :get, class: "btn btn-outline-secondary btn-sm" do %>
+                  <i class="ion-edit"></i> Edit Article
+               <% end %>
+
+					<%= link to: Routes.articles_path(@conn, :edit, @article), method: :get, class: "btn btn-outline-danger btn-sm" do %>
+                  <i class="ion-trash-a"></i> Delete Article
+					<% end %>
+
+				<% else %>
+					<%= if Realworld.Blog.check_if_followed?(RealworldWeb.Helpers.SessionHelper.get_user_id_session(@conn), @article.author_id) do %>
+						<%= button to: Routes.users_path(@conn, :unfollow, @article.author, path: "/articles/#{@article.id}"), method: :post, class: "btn btn-sm btn-outline-secondary" do %>
+							<i class="ion-minus-round"></i>
+							&nbsp;
+							Unfollow <%= @article.author.username %>
+						<% end %>
+					<% else %>
+						<%= button to: Routes.users_path(@conn, :follow, @article.author, path: "/articles/#{@article.id}"), method: :post, class: "btn btn-sm btn-outline-secondary" do %>
+							<i class="ion-plus-round"></i>
+							&nbsp;
+							Follow <%= @article.author.username %>
+						<% end %>
+					<% end %>
+
+               &nbsp;
+
+               <%= if Realworld.Blog.check_if_liked?(RealworldWeb.Helpers.SessionHelper.get_user_id_session(@conn), @article.id) do %>
+						<%= button to: Routes.users_path(@conn, :unlike, @article, path: "/articles/#{@article.id}"), method: :post, class: "btn btn-sm btn-outline-primary" do %>
+							<i class="ion-heart"></i>
+							&nbsp;
+							Unfavorite Post <span class="counter">(29)</span>
+						<% end %>
+					<% else %>
+						<%= button to: Routes.users_path(@conn, :like, @article, path: "/articles/#{@article.id}"), method: :post, class: "btn btn-sm btn-outline-primary" do %>
+							<i class="ion-heart"></i>
+							&nbsp;
+							Favorite Post <span class="counter">(29)</span>
+						<% end %>
+					<% end %>
+
+               <!-- <button class="btn btn-sm btn-outline-primary">
+               <i class="ion-heart"></i>
+               &nbsp;
+               Favorite Post <span class="counter">(29)</span>
+               </button> -->
+				<% end %>
+            <!-- <button class="btn btn-sm btn-outline-secondary">
             <i class="ion-plus-round"></i>
             &nbsp;
             Follow <%= @article.author.username %>
-            </button>
+            </button> 
             &nbsp;
             <button class="btn btn-sm btn-outline-primary">
             <i class="ion-heart"></i>
             &nbsp;
             Favorite Post <span class="counter">(29)</span>
-            </button>
+            </button> -->
+            <!-- -->
          </div>
       </div>
       <div class="row">

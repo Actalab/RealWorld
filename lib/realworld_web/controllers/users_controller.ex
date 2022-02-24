@@ -43,18 +43,42 @@ defmodule RealworldWeb.UsersController do
     render(conn, "show_fav.html", fav_articles: fav_articles, user: user)
 	end
 
-	def follow(conn, %{"id" => user_id_to_follow}) do
+	def follow(conn, %{"id" => user_id_to_follow, "path" => path}) do
 		current_user = Blog.get_user(1)
 		user_to_follow = Blog.get_user(user_id_to_follow)
 		Blog.follow_user(current_user, user_to_follow)
-		redirect conn, to: Routes.users_path(conn, :show, user_to_follow)
+    #[url] = get_req_header(conn, "origin")
+    #[origin] = get_req_header(conn, "referer")
+    #path = String.replace(origin, url, "")
+		redirect conn, to: path
+		#redirect conn, to: Routes.users_path(conn, :show, user_to_follow)
 	end
 
-  def unfollow(conn, %{"id" => user_id_to_unfollow}) do
+  def unfollow(conn, %{"id" => user_id_to_unfollow, "path" => path}) do
 		current_user = Blog.get_user(1)
 		user_to_unfollow = Blog.get_user(user_id_to_unfollow)
 		Blog.unfollow_user(current_user, user_to_unfollow)
-		redirect conn, to: Routes.users_path(conn, :show, user_to_unfollow)
+    #[url] = get_req_header(conn, "origin")
+    #[origin] = get_req_header(conn, "referer")
+    #path = String.replace(origin, url, "")
+		redirect conn, to: path
+    #Routes.users_path(conn, :show, user_to_unfollow)
 	end
+
+  def like(conn, %{"id" => article_id_to_like, "path" => path}) do
+    #current_user = RealworldWeb.Helpers.SessionHelper.get_user_id_session(@conn)
+    current_user = Blog.get_user(1)
+    article_to_like = Blog.get_article(article_id_to_like)
+    Blog.add_fav_article(current_user, article_to_like)
+    redirect conn, to: path
+  end
+
+  def unlike(conn, %{"id" => article_id_to_unlike, "path" => path}) do
+    #current_user = RealworldWeb.Helpers.SessionHelper.get_user_id_session(@conn)
+    current_user = Blog.get_user(1)
+    article_to_unlike = Blog.get_article(article_id_to_unlike)
+    Blog.unfav_article(current_user, article_to_unlike)
+    redirect conn, to: path
+  end
 
 end

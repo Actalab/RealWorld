@@ -162,6 +162,11 @@ defmodule Realworld.Blog do
       new
   end
 
+  def check_if_liked?(user_id, article_id_to_like) do
+    query = from(fav in "favourites_articles", where: fav.article_id == ^article_id_to_like and fav.user_id == ^user_id)
+    Repo.exists?(query)
+  end
+
   # -----------COMMENTS-----------#
   def create_comment(user, article, attributes) do
     %Comment{article_id: article.id, author_id: user.id}

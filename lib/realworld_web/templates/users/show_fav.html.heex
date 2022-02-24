@@ -11,11 +11,27 @@
 					<p>
 						<%= @user.bio %>
 					</p>
-					<button class="btn btn-sm btn-outline-secondary action-btn">
-						<i class="ion-plus-round"></i>
-						&nbsp;
-						Follow <%= @user.username %>
-					</button>
+					<%= if RealworldWeb.Helpers.SessionHelper.get_user_id_session(@conn) == @user.id do %>
+						<%= link to: Routes.users_path(@conn, :edit, @user), method: :get, class: "btn btn-sm btn-outline-secondary action-btn" do %>
+							<i class="ion-gear-a"></i>
+							&nbsp;
+							Edit Profile Settings
+						<% end %>
+					<% else %>
+						<%= if Realworld.Blog.check_if_followed?(RealworldWeb.Helpers.SessionHelper.get_user_id_session(@conn), @user.id) do %>
+							<%= button to: Routes.users_path(@conn, :unfollow, @user), method: :post, class: "btn btn-sm btn-outline-secondary action-btn" do %>
+								<i class="ion-minus-round"></i>
+								&nbsp;
+								Unfollow <%= @user.username %>
+							<% end %>
+						<% else %>
+							<%= button to: Routes.users_path(@conn, :follow, @user), method: :post, class: "btn btn-sm btn-outline-secondary action-btn" do %>
+								<i class="ion-plus-round"></i>
+								&nbsp;
+								Follow <%= @user.username %>
+							<% end %>
+						<% end %>
+					<% end %>
 				</div>
 
 			</div>

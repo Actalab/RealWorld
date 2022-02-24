@@ -19,13 +19,13 @@
 						<% end %>
 					<% else %>
 						<%= if Realworld.Blog.check_if_followed?(RealworldWeb.Helpers.SessionHelper.get_user_id_session(@conn), @user.id) do %>
-							<%= link to: Routes.users_path(@conn, :unfollow, @user), method: :post, class: "btn btn-sm btn-outline-secondary action-btn" do %>
-								<i class="ion-plus-round"></i>
+							<%= button to: Routes.users_path(@conn, :unfollow, @user), method: :post, class: "btn btn-sm btn-outline-secondary action-btn" do %>
+								<i class="ion-minus-round"></i>
 								&nbsp;
 								Unfollow <%= @user.username %>
 							<% end %>
 						<% else %>
-							<%= link to: Routes.users_path(@conn, :follow, @user), method: :post, class: "btn btn-sm btn-outline-secondary action-btn" do %>
+							<%= button to: Routes.users_path(@conn, :follow, @user), method: :post, class: "btn btn-sm btn-outline-secondary action-btn" do %>
 								<i class="ion-plus-round"></i>
 								&nbsp;
 								Follow <%= @user.username %>
