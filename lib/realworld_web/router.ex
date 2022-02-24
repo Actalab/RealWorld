@@ -23,7 +23,13 @@ defmodule RealworldWeb.Router do
 
     resources "/articles", ArticlesController, except: [:index]
 
-    resources "/users", UsersController, except: [:index, :delete]
+    get "/register", UsersController, :new
+
+    resources "/users", UsersController, except: [:index, :delete, :new]
+
+    get "/users/:id/favourites", UsersController, :fav
+
+    post "/users/:id/follow", UsersController, :follow
 
     #resources "/users", UserController
     #resources "/articles", ArticleController do

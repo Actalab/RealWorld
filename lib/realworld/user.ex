@@ -1,6 +1,6 @@
 defmodule Realworld.User do
   use Ecto.Schema
-	alias Realworld.Article
+	alias Realworld.{Article, User}
   import Ecto.Changeset
 
   schema "users" do
@@ -21,6 +21,8 @@ defmodule Realworld.User do
     |> validate_required([:email, :username, :password_hash])
     |> handle_password()
   end
+
+  def changeset(params), do: changeset(%User{}, params)
 
   def registration_changeset(struct, params) do
     struct

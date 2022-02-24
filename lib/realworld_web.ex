@@ -24,6 +24,8 @@ defmodule RealworldWeb do
       import Plug.Conn
       import RealworldWeb.Gettext
       alias RealworldWeb.Router.Helpers, as: Routes
+
+      import RealworldWeb.Helpers.SessionHelper
     end
   end
 

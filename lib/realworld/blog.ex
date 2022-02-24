@@ -6,7 +6,7 @@ defmodule Realworld.Blog do
   def create_user(params) do
     %User{}
     |> User.registration_changeset(params)
-    |> Repo.insert!()
+    |> Repo.insert()
   end
 
   def get_user(user_id, preload_associations \\ []) do
@@ -71,6 +71,11 @@ defmodule Realworld.Blog do
     |> Repo.preload(preload_associations)
   end
 
+  def check_if_followed?(user_id, user_to_follow_id) do
+    query = from(f in "following_table", where: f.followed_user_id == ^user_to_follow_id and f.follower_user_id == ^user_id)
+    Repo.exists?(query)
+  end
+
   # -----------ARTICLES-----------#
   def create_article(user, attributes) do
     %Article{author_id: user.id}
@@ -132,7 +137,7 @@ defmodule Realworld.Blog do
 
   def list_fav_article_by_user(user) do
     user = Repo.preload(user, :favourites_articles)
-    user.favourites_articles
+    Repo.preload(user.favourites_articles, :author)
   end
 
   def list_articles_of_followed(user) do

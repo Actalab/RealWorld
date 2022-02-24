@@ -7,6 +7,6 @@ defmodule Realworld.Repo.Migrations.CreateFollowingTable do
       add :follower_user_id, references(:users)
     end
 
-    create unique_index(:following_table, [:followed_user_id, :followed_user_id])
+    create unique_index(:following_table, [:followed_user_id, :follower_user_id])
   end
 end

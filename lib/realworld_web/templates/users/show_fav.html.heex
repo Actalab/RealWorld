@@ -11,28 +11,11 @@
 					<p>
 						<%= @user.bio %>
 					</p>
-					<%= if RealworldWeb.Helpers.SessionHelper.get_user_id_session(@conn) == @user.id do %>
-						<%= link to: Routes.users_path(@conn, :edit, @user), method: :get, class: "btn btn-sm btn-outline-secondary action-btn" do %>
-							<i class="ion-gear-a"></i>
-							&nbsp;
-							Edit Profile Settings
-						<% end %>
-					<% else %>
-						<%= if Realworld.Blog.check_if_followed?(RealworldWeb.Helpers.SessionHelper.get_user_id_session(@conn), @user.id) do %>
-							<%= link to: Routes.users_path(@conn, :unfollow, @user), method: :post, class: "btn btn-sm btn-outline-secondary action-btn" do %>
-								<i class="ion-plus-round"></i>
-								&nbsp;
-								Unfollow <%= @user.username %>
-							<% end %>
-						<% else %>
-							<%= link to: Routes.users_path(@conn, :follow, @user), method: :post, class: "btn btn-sm btn-outline-secondary action-btn" do %>
-								<i class="ion-plus-round"></i>
-								&nbsp;
-								Follow <%= @user.username %>
-							<% end %>
-						<% end %>
-					<% end %>
-					<!-- <%= RealworldWeb.Helpers.SessionHelper.get_user_session(@conn).email %> -->
+					<button class="btn btn-sm btn-outline-secondary action-btn">
+						<i class="ion-plus-round"></i>
+						&nbsp;
+						Follow <%= @user.username %>
+					</button>
 				</div>
 
 			</div>
@@ -46,19 +29,19 @@
 				<div class="articles-toggle">
 					<ul class="nav nav-pills outline-active">
 						<li class="nav-item">
-							<%= link to: Routes.users_path(@conn, :show, @user), class: "nav-link active" do %>
+                            <%= link to: Routes.users_path(@conn, :show, @user), class: "nav-link" do %>
 							    My Articles
-              <% end %>
+                            <% end %>
 						</li>
 						<li class="nav-item">
-							<%= link to: Routes.users_path(@conn, :fav, @user), class: "nav-link" do %>
+                            <%= link to: Routes.users_path(@conn, :fav, @user), class: "nav-link active" do %>
 							    Favorited Articles
-              <% end %>
+                            <% end %>
 						</li>
 					</ul>
 				</div>
 
-				<%= for article <- @articles do %>
+				<%= for article <- @fav_articles do %>
 					<div class="article-preview">
 						<div class="article-meta">
 							<%= link to: Routes.users_path(@conn, :show, article.author) do %>

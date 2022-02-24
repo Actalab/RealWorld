@@ -36,16 +36,29 @@
                 <% end %>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="">
-                    <i class="ion-gear-a"></i>&nbsp;Settings
-                </a>
+              <%= link to: Routes.users_path(@conn, :edit, 1), class: "nav-link" do %> <!-- ATTENTION ICI -->
+                <i class="ion-gear-a"></i>&nbsp;Settings
+              <% end %>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="">Sign in</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="">Sign up</a>
-            </li>
+            <%= if RealworldWeb.Helpers.SessionHelper.get_user_id_session(@conn) == nil do %>
+              <li class="nav-item">
+                <%= link to: Routes.users_path(@conn, :new), class: "nav-link" do %>
+                  Sign in
+                <% end %>
+              </li>
+              <li class="nav-item">
+                <%= link to: Routes.users_path(@conn, :new), class: "nav-link" do %>
+                  Sign up
+                <% end %>
+              </li>
+            <% else %>
+              <li class="nav-item">
+                <%= link to: Routes.users_path(@conn, :show, RealworldWeb.Helpers.SessionHelper.get_user_session(@conn)), class: "nav-link ng-binding active" do %>
+                  <img class="user-pic" ng-src="https://api.realworld.io/images/smiley-cyrus.jpeg" src="https://api.realworld.io/images/smiley-cyrus.jpeg">
+                  <%= RealworldWeb.Helpers.SessionHelper.get_user_session(@conn).username %>
+                <% end %>
+              </li>
+            <% end %>
           </ul>
         </div>
       </nav>
